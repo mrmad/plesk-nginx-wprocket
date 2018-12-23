@@ -20,5 +20,23 @@ Additional notes:
 
 * I'm using pure Nginx without Apache
 * Tested with PHP 7.3
-* Nginx was compiled using script by VirtuBox -->> https://github.com/VirtuBox/nginx-ee
+* WordPress 5.0.2
+
+
+                                                +++++SOURCES USED+++++
+
+One trick that'll make your WordPress site really fast. Yes, only one. (*well, I used more than one...):
+https://codeable.io/one-trick-will-make-your-wordpress-site-really-fast/
+
+various tewaks by EasyEngine:
+https://easyengine.io/tutorials/nginx/
+
+Nginx was compiled using script by VirtuBox
+https://github.com/VirtuBox/nginx-ee
+
+Perfect Nginx configuration for WP Rocket Plugin (used in additional nginx directives)
+https://www.tinywp.in/wp-rocket-nginx-configuration/
+
+
+
 
