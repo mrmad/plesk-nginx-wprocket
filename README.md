@@ -25,16 +25,23 @@ Additional notes:
 
                                                 +++++SOURCES USED+++++
 
+
 One trick that'll make your WordPress site really fast. Yes, only one. (*well, I used more than one...):
+
 https://codeable.io/one-trick-will-make-your-wordpress-site-really-fast/
+
 
 various tewaks by EasyEngine:
 https://easyengine.io/tutorials/nginx/
 
-Nginx was compiled using script by VirtuBox
+
+Nginx was compiled using script by VirtuBox:
+
 https://github.com/VirtuBox/nginx-ee
 
-Perfect Nginx configuration for WP Rocket Plugin (used in additional nginx directives)
+
+Perfect Nginx configuration for WP Rocket Plugin (used in additional nginx directives):
+
 https://www.tinywp.in/wp-rocket-nginx-configuration/
 
 
