@@ -9,8 +9,13 @@ Whilst this might NOT be the most elegant solution, I found it to be extremely e
 
 
 I enclude  my additional nginx directives for Plesk Onyx.
+
 Please add those here: 
+
+
 HOSTING SERVICES --> DOMAINS --> yourdomain.com --> Apache & nginx Settings -> Additional nginx directives.
+
+
 Additional notes:
 
 * I'm using pure Nginx without Apache
