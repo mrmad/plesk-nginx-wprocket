@@ -13,7 +13,7 @@ Please add those here:
 HOSTING SERVICES --> DOMAINS --> yourdomain.com --> Apache & nginx Settings -> Additional nginx directives.
 Additional notes:
 
-# I'm using pure Nginx without Apache
-# Tested with PHP 7.3
-# Nginx was compiled using script by VirtuBox -->> https://github.com/VirtuBox/nginx-ee
+* I'm using pure Nginx without Apache
+* Tested with PHP 7.3
+* Nginx was compiled using script by VirtuBox -->> https://github.com/VirtuBox/nginx-ee
 
