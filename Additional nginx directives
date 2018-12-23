@@ -1,0 +1,161 @@
+# To improve the perf, let's use open_file_cache
+# ref: nginx.org/r/open_file_cache
+open_file_cache               max=10000 inactive=5m;
+open_file_cache_valid    2m;
+open_file_cache_min_uses 1;
+open_file_cache_errors   on;
+
+# Global restrictions configuration file.
+# Designed to be included in any server {} block.
+
+# Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac), .git.
+location /.git { deny all; }
+location /.htaccess { deny all; }
+location /.htpasswd { deny all; }
+location /.user.ini { deny all; }
+# this actually covers every dot file, except what follows below it (ex: CertBot)
+location ~ ^/\. { deny all; }
+
+# but allow CertBot - see http://stackoverflow.com/a/34262192
+location ^~ /.well-known/acme-challenge {
+	auth_basic off;
+	try_files $uri =404;
+	expires -1;
+}
+
+# Deny access to any files with a .php extension in the uploads directory
+location ~* /uploads/.*\.php$ { deny all; }
+
+# Deny access to any files with a .php extension in the uploads directory for multisite
+location ~* /files/.*\.php$ { deny all; }
+
+# Since version 2.5.7, Akismet introduced a new .htaccess file to block direct access to php files
+# Ref: http://wordpress.org/extend/plugins/akismet/changelog/
+location ~* /akismet/.*\.php$ { deny all; }
+
+# Restrict direct access to cached content
+location /wp-content/cache/ { deny all; }
+
+# Deny access to backup files!
+location ~ ~$ { deny all; }
+
+### common directives and settings
+
+index index.html index.php;
+
+# Ref: https://gist.github.com/magnetikonline/11312172
+fastcgi_buffers 32 32k;
+fastcgi_buffer_size 32k;
+
+proxy_buffers 8 32k;
+proxy_buffer_size 64k;
+# -------------------------------------------------------------------
+
+# for time-consuming operations (such as WP import or file upload)
+# https://nginx.org/r/fastcgi_read_timeout
+# default 60 seconds
+fastcgi_read_timeout 5m;
+
+# -------------------------------------------------------------------
+##
+# Gzip Settings
+##
+
+# uncomment the following, if your nginx.conf already doesn't have it turned on
+# gzip on;
+
+gzip_disable "msie6";
+
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_buffers 16 8k;
+
+gzip_types
+text/plain
+text/css
+text/xml
+text/javascript
+image/svg+xml
+application/json
+application/javascript
+application/x-javascript
+application/xml
+application/atom+xml
+application/xml+rss;
+
+# Uncomment the following, if Amazon CloudFront is used
+# gzip_http_version 1.0;
+####wprocket######
+# version 5
+location / {
+	error_page 418 = @cachemiss;
+	recursive_error_pages on;
+
+	if ($http_cookie ~* "wordpress_logged_in_") { return 418; }
+	if ($http_cookie ~* "comment_author_") { return 418; }
+	if ($http_cookie ~* "wp_postpass_") { return 418; }
+
+	# bypass cache for common query strings
+	if ($arg_s != "") { return 418; } # search query
+	if ($arg_p != "") { return 418; } # request a post / page by ID
+	if ($arg_amp != "") { return 418; } # amp test
+	if ($arg_preview = "true") { return 418; } # preview post / page
+
+	try_files "/wp-content/cache/wp-rocket/$host/index.html" $uri $uri/ /index.php$is_args$args;
+}
+
+location @cachemiss {
+	try_files $uri $uri/ /index.php$is_args$args;
+}
+#####wp-rocket#######
+# For CSS / JS
+location ~ \.(?:css|js)$ {
+	expires max;
+	log_not_found off;
+	access_log off;
+	add_header X-Content-Type-Options "nosniff";
+}
+
+# Web fonts needs some special care
+# Reference: http://jmoiron.net/blog/serving-fonts-aws-cloudfront/
+location ~ \.(?:ttf|ttc|eot|woff|woff2|otf|svg)$ {
+	# Safe to use the following line
+	add_header Access-Control-Allow-Origin "*";
+
+	# use the following with caution!
+	# add_header Access-Control-Allow-Origin "http://*.example.com";
+
+	expires max;
+	log_not_found off;
+	access_log off;
+}
+
+# Referers for images
+location ~ \.(?:gif|ico|webp)$ {
+	### Please change the domainname before uncommenting the following
+	#valid_referers none blocked www.www.yourdomain.com www.yourdomain.com;
+	#if ($invalid_referer) { return 403; }
+
+	expires max;
+	log_not_found off;
+	access_log off;
+}
+
+location ~* ^.+\.(png|jpe?g)$ {
+	### Please change the domainname before uncommenting the following
+	#valid_referers none blocked www.yourdomain.com www.yourdomain.com;
+	#if ($invalid_referer) { return 403; }
+
+	# add_header Vary Accept;
+	# see https://docs.ewww.io/article/16-ewww-io-and-webp-images
+	try_files $uri$webp_suffix $uri =404;
+	expires max;
+	log_not_found off;
+	access_log off;
+}
+
+# Feeds
+location ~ \.(?:rss|atom)$ {
+	expires 600s; # 10 minutes
+}
