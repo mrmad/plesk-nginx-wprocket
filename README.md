@@ -32,6 +32,7 @@ https://codeable.io/one-trick-will-make-your-wordpress-site-really-fast/
 
 
 various tewaks by EasyEngine:
+
 https://easyengine.io/tutorials/nginx/
 
 
