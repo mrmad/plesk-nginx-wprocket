@@ -8,7 +8,7 @@ This is a collection of various (tested) configuration snippets I've found in th
 Whilst this might NOT be the most elegant solution, I found it to be extremely effective on a working server. 
 
 
-I enclude  my additional nginx directives for Plesk Onyx.
+Do not forget to use the additional nginx directives for Plesk Onyx.
 
 Please add those here: 
 
